@@ -11,22 +11,24 @@ import (
 	"time"
 )
 
-const host = "srv.msk01.gigacorp.local"
-// const host = "ya.ru"
+const host = "http://srv.msk01.gigacorp.local/_stats"
+
+// const host = "https://practicum.yandex.ru"
 
 const loadLimit = 30
 const memoryLimit = 0.8
 const diskLimit = 0.9
 const networkLimit = 0.9
+
 var requestErrorCounter = 0
 
 func main() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c)
- 
-	ticker := time.NewTicker(time.Second * 5)
+
+	ticker := time.NewTicker(time.Second)
 	stop := make(chan bool)
- 
+
 	go func() {
 		defer func() { stop <- true }()
 		for {
@@ -41,10 +43,10 @@ func main() {
 			}
 		}
 	}()
- 
+
 	<-c
 	ticker.Stop()
- 
+
 	stop <- true
 	<-stop
 }
@@ -52,18 +54,18 @@ func main() {
 func MakeRequest() {
 	response, err := http.Get(host)
 
-    if err != nil || response.StatusCode != http.StatusOK {
+	if err != nil || response.StatusCode != http.StatusOK {
 		requestErrorCounter += 1
 		return
-    }
+	}
 
 	bodyBytes, err := io.ReadAll(response.Body)
-    if err != nil {
-        requestErrorCounter += 1
+	response.Body.Close()
+	if err != nil {
+		requestErrorCounter += 1
 		return
-    }
-    ParseRequestBody(string(bodyBytes))
-
+	}
+	ParseRequestBody(string(bodyBytes))
 }
 
 func ParseRequestBody(body string) {
@@ -71,7 +73,7 @@ func ParseRequestBody(body string) {
 	var memory float64
 	var disk float64
 	var network float64
-	
+
 	if len(arrayValues) != 7 {
 		requestErrorCounter += 1
 		return
@@ -79,7 +81,7 @@ func ParseRequestBody(body string) {
 
 	for index, value := range arrayValues {
 		number, err := strconv.Atoi(value)
-		
+
 		if err != nil {
 			requestErrorCounter += 1
 			return
@@ -95,7 +97,7 @@ func ParseRequestBody(body string) {
 		case 2:
 			memoryUsage := float64(number) / memory
 			if memoryUsage > memoryLimit {
-				fmt.Printf("Memory usage too high: %v%%\n", int(memoryUsage * 100))
+				fmt.Printf("Memory usage too high: %v%%\n", int(memoryUsage*100))
 			}
 		case 3:
 			disk = float64(number)
