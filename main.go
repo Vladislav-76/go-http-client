@@ -101,7 +101,7 @@ func ParseRequestBody(body string) {
 		case 4:
 			diskUsage := float64(number) / disk
 			if diskUsage > diskLimit {
-				freeSpace := (int(disk) - number) / 1000000
+				freeSpace := (int(disk) - number) / 1048576
 				fmt.Printf("Free disk space is too low: %v Mb left\n", freeSpace)
 			}
 		case 5:
