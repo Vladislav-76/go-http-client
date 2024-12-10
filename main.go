@@ -23,7 +23,7 @@ func main() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c)
 
-	ticker := time.NewTicker(time.Second)
+	ticker := time.NewTicker(time.Millisecond * 100)
 	stop := make(chan bool)
 
 	go func() {
@@ -109,7 +109,7 @@ func ParseRequestBody(body string) {
 		case 6:
 			networkUsage := float64(number) / network
 			if networkUsage > networkLimit {
-				availableNetwork := (int(network) - number) / 125000
+				availableNetwork := (int(network) - number) / 1000000
 				fmt.Printf("Network bandwidth usage high: %v Mbit/s available\n", availableNetwork)
 			}
 		}
