@@ -12,9 +12,6 @@ import (
 )
 
 const host = "http://srv.msk01.gigacorp.local/_stats"
-
-// const host = "https://practicum.yandex.ru"
-
 const loadLimit = 30
 const memoryLimit = 0.8
 const diskLimit = 0.9
@@ -104,7 +101,7 @@ func ParseRequestBody(body string) {
 		case 4:
 			diskUsage := float64(number) / disk
 			if diskUsage > diskLimit {
-				freeSpace := (disk - diskUsage) / 1000000
+				freeSpace := (int(disk) - number) / 1000000
 				fmt.Printf("Free disk space is too low: %v Mb left\n", freeSpace)
 			}
 		case 5:
