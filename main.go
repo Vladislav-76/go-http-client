@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
-	"os/signal"
+	// "os"
+	// "os/signal"
 	"strconv"
 	"strings"
-	"time"
+	// "time"
 )
 
 const host = "http://srv.msk01.gigacorp.local/_stats"
@@ -20,32 +20,39 @@ const networkLimit = 0.9
 var requestErrorCounter = 0
 
 func main() {
-	c := make(chan os.Signal, 1)
-	signal.Notify(c)
+	// c := make(chan os.Signal, 1)
+	// signal.Notify(c)
 
-	ticker := time.NewTicker(time.Millisecond * 100)
-	stop := make(chan bool)
+	// ticker := time.NewTicker(time.Millisecond * 100)
+	// stop := make(chan bool)
 
-	go func() {
-		defer func() { stop <- true }()
-		for {
-			select {
-			case <-ticker.C:
-				MakeRequest()
-				if requestErrorCounter >= 3 {
-					fmt.Println("Unable to fetch server statistic")
-				}
-			case <-stop:
-				return
-			}
+	// go func() {
+	// 	defer func() { stop <- true }()
+	// 	for {
+	// 		select {
+	// 		case <-ticker.C:
+	// 			MakeRequest()
+	// 			if requestErrorCounter >= 3 {
+	// 				fmt.Println("Unable to fetch server statistic")
+	// 			}
+	// 		case <-stop:
+	// 			return
+	// 		}
+	// 	}
+	// }()
+
+	// <-c
+	// ticker.Stop()
+
+	// stop <- true
+	// <-stop
+
+	for {
+		MakeRequest()
+		if requestErrorCounter >= 3 {
+			fmt.Println("Unable to fetch server statistic")
 		}
-	}()
-
-	<-c
-	ticker.Stop()
-
-	stop <- true
-	<-stop
+	}
 }
 
 func MakeRequest() {
